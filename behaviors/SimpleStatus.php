@@ -6,7 +6,7 @@
  * @author igoru
  */
 class SimpleStatus extends CActiveRecordBehavior {
-	
+
 	protected $attr = 'status';
 
 	/**
@@ -14,7 +14,7 @@ class SimpleStatus extends CActiveRecordBehavior {
 	 * @return CActiveRecord
 	 */
 	public function enabled() {
-		$this->owner->getDbCriteria()->mergeWith(array('condition' => $this->attr.'=1'));
+		$this->owner->getDbCriteria()->mergeWith(array('condition' => 't.'.$this->attr.'=1'));
 		return $this->owner;
 	}
 
@@ -24,10 +24,10 @@ class SimpleStatus extends CActiveRecordBehavior {
 	 * @return CActiveRecord
 	 */
 	public function disabled() {
-		$this->owner->getDbCriteria()->mergeWith(array('condition' => $this->attr.'=0'));
+		$this->owner->getDbCriteria()->mergeWith(array('condition' => 't.'.$this->attr.'=0'));
 		return $this->owner;
 	}
-	
+
 	public function enable() {
 		if ($this->owner->{$this->attr} == 1) {
 			return true;

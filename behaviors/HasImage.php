@@ -19,16 +19,20 @@ class HasImage extends CActiveRecordBehavior {
 	 */
 	public $resize			= true;
 	/**
-	 * Dimensions of the final image, if resized. array(width, height)
+	 * Dimensions of the final image, if resized, for each field. array(array(width, height))
 	 * @var array
 	 */
-	public $resizeTo		= array(300,200);
+	public $resizeTo		= array(array(300,200));
 	/**
 	 * How the thumbnail file should be named. Words between asterisks (*)
 	 * will be replaced by its corresponding attribute. Case-sensitive way.
 	 * @var string
 	 */
 	public $nameMask		= '*primaryKey*';
+	/**
+	 * If the filename will be prepended with the field name. Useful when you have more than one image field for the model.
+	 */
+	public $prependFileName	= true;
 	/**
 	 * Generated JPEG quality.
 	 * @var integer
@@ -41,7 +45,7 @@ class HasImage extends CActiveRecordBehavior {
 	 */
 	public $hasThumb		= false;
 	/**
-	 * Thumbnail dimensions, if exists. array(width, height)
+	 * Thumbnail dimensions, if exists, for each field. array(array(width, height))
 	 * @var array
 	 */
 	public $thumbSize		= array(96,96);
@@ -49,7 +53,7 @@ class HasImage extends CActiveRecordBehavior {
 	 * Generated thumbnail JPEG quality.
 	 * @var integer
 	 */
-	public $thumbQuality	= 80;
+	public $thumbQuality	= 90;
 	
 	public function __construct() {
       Yii::import('ext.ImageCropper');
@@ -57,9 +61,10 @@ class HasImage extends CActiveRecordBehavior {
 	
 	public function beforeValidate($event) {
       parent::beforeValidate($event);
-
-		foreach ($this->fields as $field) {
-			$this->owner->$field = CUploadedFile::getInstance($this->owner->model(), 'image');
+	  
+       	foreach ($this->fields as $field) {
+           	if (!is_a($this->owner->$field, 'CUploadedFile'))
+					$this->owner->$field = CUploadedFile::getInstance($this->owner->model(), $field);
 		}
 
 		return true;
@@ -67,45 +72,47 @@ class HasImage extends CActiveRecordBehavior {
 
 	public function beforeSave($event) {
       parent::beforeSave($event);
-
-    	if (!$this->owner->isNewRecord) {
+	  
+       	if (!$this->owner->isNewRecord) {
 			foreach ($this->fields as $field) {
 				if (!$this->owner->$field)
 					$this->owner->$field = $this->owner->model()->findByPk($this->owner->primaryKey)->$field;
 			}
-		}
+       	}
 
-		return true;
+      	return true;
    }
 
-
  	public function afterSave($event) {
-      parent::afterSave($event);
+		parent::afterSave($event);
 
 		$newNames = array();
-		
-     	foreach ($this->fields as $field) {
-			if ($this->owner->$field instanceof CUploadedFile) {
 
-				//generating the new filename and subtituting it in the entry
+       	$i = 0;
+       	foreach ($this->fields as $field) {
+           	if ($this->owner->$field instanceof CUploadedFile) {
+               	//generating the new filename and subtituting it in the entry
 				$fileName = $newNames[$field] = preg_replace('/\*([a-zA-Z_]+[a-zA-Z0-9_]*)\*/e', '\$this->owner->$1', $this->nameMask).'.jpg';
+				if ($this->prependFileName) $fileName = $field.'_'.$fileName;
 				$cropper = new ImageCropper();
 
-				//creating the original image
+               	//creating the original image
 				if ($this->resize)
-					$cropper->resize_and_crop($this->owner->$field->tempName, self::getImagePath($fileName), $this->resizeTo[0], $this->resizeTo[1], $this->fileQuality);
+					$cropper->resize_and_crop($this->owner->$field->tempName, self::getImagePath($fileName), $this->resizeTo[$i][0], $this->resizeTo[$i][1], $this->fileQuality, true);
 				else
 					$this->owner->$field->saveAs(self::getImagePath($fileName));
 
 				//and now, the thumbnail
 				if ($this->hasThumb) {
 					$thumbName = $this->generateThumbName($fileName);
-              	$cropper->resize_and_crop(self::getImagePath($fileName), self::getImagePath($thumbName), $this->thumbSize[0], $this->thumbSize[1], $this->thumbQuality);
+					$cropper->resize_and_crop(self::getImagePath($fileName), self::getImagePath($thumbName), $this->thumbSize[$i][0], $this->thumbSize[$i][1], $this->thumbQuality, true);
 				}
 			}
+           	++$i;
 		}
 
-		//now we need to update the entry with the new filename
+
+      	//now we need to update the entry with the new filename
 		if (sizeof($newNames) > 0) {
 			$reg = $this->owner->findByPk($this->owner->primaryKey);
 			foreach ($newNames as $field => $newName) $reg->$field = $newName;
@@ -154,16 +161,17 @@ class HasImage extends CActiveRecordBehavior {
 	 * @return string
 	 */
 	private function getImagePath($filename, $thumb = false) {
-     	if ($thumb) $filename = $this->generateThumbName($filename);
+       	if ($thumb) $filename = $this->generateThumbName($filename);
 		return Yii::app()->basePath.'/'.Yii::app()->params['imgPath'].'/'.$this->owner->model()->tableName().'/'.$filename;
 	}
 
 	/**
-	 * Returns the image URL, at this format:
+	 * Returns the image URL, in this format:
 	 * http://www.yoursite.com/img_folder/table_name/file.jpg
 	 * Requires the app params "imgUrl" and "imgRootUrl, that should contain relative paths
 	 * from the admin folder and root folder to the image folder.
-	 * @param string $root = false
+	 * @param string $root=false
+	 * @param string $thumb=false
 	 * @return string
 	 */
 	public function getImageUrl($field, $root = false, $thumb = false) {
