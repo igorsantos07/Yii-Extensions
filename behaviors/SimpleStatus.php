@@ -7,14 +7,15 @@
  */
 class SimpleStatus extends CActiveRecordBehavior {
 
-	protected $attr = 'status';
+	public $attr = 'status';
+	public $values = array(true => 1, false => 0);
 
 	/**
 	 * Named Scope for enabled records
 	 * @return CActiveRecord
 	 */
 	public function enabled() {
-		$this->owner->getDbCriteria()->mergeWith(array('condition' => 't.'.$this->attr.'=1'));
+		$this->owner->getDbCriteria()->mergeWith(array('condition' => 't.'.$this->attr."='".$this->values[true]."'"));
 		return $this->owner;
 	}
 
@@ -24,7 +25,7 @@ class SimpleStatus extends CActiveRecordBehavior {
 	 * @return CActiveRecord
 	 */
 	public function disabled() {
-		$this->owner->getDbCriteria()->mergeWith(array('condition' => 't.'.$this->attr.'=0'));
+		$this->owner->getDbCriteria()->mergeWith(array('condition' => 't.'.$this->attr."='".$this->values[false]."'"));
 		return $this->owner;
 	}
 
