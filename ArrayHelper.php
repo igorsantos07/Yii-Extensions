@@ -11,6 +11,9 @@ abstract class ArrayHelper {
 	 * @static
 	 */ public static $compare_key = '';
 
+	 const REMOVE_WHITELIST = 'w';
+	 const REMOVE_BLACKLIST = 'b';
+
 	/**
 	 * Remove todos os valores vazios (empty()) de array e, opcionalmente, reindexa as chaves.
 	 * @param array $dirty_array O array em questão
@@ -31,22 +34,55 @@ abstract class ArrayHelper {
 	}
 
 	/**
-	 * Remove todas as chaves de $crowded_array, exceto as que estiverem na $whitelist.
+	 * Remove todas as chaves de $crowded_array, exceto as que estiverem na $whitelist e o retorna.
+	 * Não altera o array recebido!
 	 * @param array $crowded_array
 	 * @param mixed $whitelist uma string que contenha o nome de somente uma chave, ou um array de nomes de chaves
 	 * @return array
+	 * @see blacklist
 	 */
 	public static function whitelist(array $crowded_array, $whitelist) {
-        if (!is_array($whitelist)) $whitelist = array($whitelist);
-        
+        return self::remove($crowded_array, $whitelist, self::REMOVE_WHITELIST);
+	}
+
+	/**
+	 * Remove todas as chaves de $crowded_array que estiverem na $blacklist e o retorna.
+	 * Não altera o array recebido!
+	 * @param array $messy_array
+	 * @param mixed $blacklist uma string que contenha o nome de somente uma chave, ou um array de nomes de chaves
+	 * @return array
+	 * @see whitelist
+	 */
+	public static function blacklist(array $messy_array, $blacklist) {
+        return self::remove($messy_array, $blacklist, self::REMOVE_BLACKLIST);
+	}
+
+	/**
+	 * Generic method to envelope black and whitelist functionalities. To further documentation about theses, see {@link whitelist} and {@link blacklist}.
+	 * @param array $array the array being filtered
+	 * @param mixed $list a string (or an array of strings) of keys to be removed/kept
+	 * @param const $type a const REMOVE_WHITELIST or REMOVE_BLACKLIST
+	 * @return array
+	 */
+	private static function remove(array $array, $list, $type) {
+        if (!is_array($list)) $list = array($list);
+
 		$remove = array();
-		foreach ($crowded_array as $prop => $value)
-			if (!in_array($prop, $whitelist)) $remove[] = $prop;
+		switch($type) {
+			case self::REMOVE_BLACKLIST:
+				foreach ($list as $blacklisted)
+					if (array_key_exists ($blacklisted, $array)) $remove[] = $blacklisted;
+			break;
+			case self::REMOVE_WHITELIST:
+				foreach ($array as $prop => $value)
+					if (!in_array($prop, $list)) $remove[] = $prop;
+			break;
+		}
 
 		foreach ($remove as $prop)
-			unset($crowded_array[$prop]);
+			unset($array[$prop]);
 
-		return $crowded_array;
+		return $array;
 	}
 
 	/**
@@ -71,7 +107,7 @@ abstract class ArrayHelper {
 	 * @return integer
 	 */
 	public static function compare(array $a, array $b) {
-		if (empty(self::$compare_key)) throw new BDM_UtilException ('Necessário colocar a chave que será usada na comparação dos arrays na propriedade BDM_Util_Array::$compare_key');
+		if (empty(self::$compare_key)) throw new Exception('Necessário colocar a chave que será usada na comparação dos arrays na propriedade BDM_Util_Array::$compare_key');
 
 		if ($a[self::$compare_key] == $b[self::$compare_key])
 			return 0;
