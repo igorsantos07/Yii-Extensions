@@ -6,7 +6,7 @@ Different behaviors to attach to classes.
 ## AlertRedirector
 Gives the user a JS alert and then redirects it to another page. Useful to give a notice that the entry was updated before sending the user to the list page.
 ## HasImage
-*Depends on: ImageCropper*
+[*Depends on: ImageCropper*]
 Model behavior. Add support to image field(s) to a model, with thumbnails and etc.
 ## SimpleStatus
 Model behavior. Adds named scopes and methods to toggle a status field.
