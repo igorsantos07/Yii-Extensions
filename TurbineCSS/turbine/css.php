@@ -126,18 +126,18 @@ if($_GET['files']){
 
 
 				$incache = false;    // Server-side cache: Has file already been parsed?
-				$cachedir = 'cache'; // Cache directory
+				$cachedir = isset($cssp->config['cache_dir'])? $cssp->config['cache_dir'] : $cssp->config['main_base_dir'].'cache'; // Cache directory
 
 
 				// Server-side cache: Check if cache-directory has been created
 				if(!is_dir($cachedir)){
 					if(!@mkdir($cachedir, 0777)){
-						$cssp->report_error('The cache directory doesn\'t exist!');
+						$cssp->report_error("The cache directory doesn't exist! '$cachedir'");
 					}
 				}
 				elseif(!is_writable($cachedir)){
 					if(!@chmod($cachedir, 0777)){
-						$cssp->report_error('The cache directory is not writeable!');
+						$cssp->report_error("The cache directory is not writeable! '$cachedir'");
 					}
 				}
 
@@ -167,7 +167,7 @@ if($_GET['files']){
 
 					// Load plugins (if not already loaded)
 					if(!$plugins_loaded){
-						$plugindir = 'plugins';
+						$plugindir = $cssp->config['main_base_dir'].'plugins';
 						if($handle = opendir($plugindir)){
 							while(false !== ($pluginfile = readdir($handle))){
 								if($pluginfile != '.' && $pluginfile != '..' && is_file($plugindir.'/'.$pluginfile) && pathinfo($plugindir.'/'.$pluginfile,PATHINFO_EXTENSION) == 'php' && !function_exists(substr($pluginfile, 0, -4))){
@@ -234,7 +234,7 @@ if($_GET['files']){
 						$compress = (bool) $cssp->parsed['global']['@turbine']['compress'][0];
 					}
 					else{
-						$compress = false;
+						$compress = (bool) $cssp->config['compress'];
 					}
 
 
