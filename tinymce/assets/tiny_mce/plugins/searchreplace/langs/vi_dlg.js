@@ -1,16 +1,1 @@
-tinyMCE.addI18n('vi.searchreplace_dlg',{
-searchnext_desc:"T\u00ECm l\u1EA1i",
-notfound:"K\u1EBFt th\u00FAc t\u00ECm ki\u1EBFm. Kh\u00F4ng th\u1EC3 t\u00ECm th\u1EA5y chu\u1ED7i t\u1EEB c\u1EA7n t\u00ECm.",
-search_title:"T\u00ECm ki\u1EBFm",
-replace_title:"T\u00ECm ki\u1EBFm/Thay th\u1EBF",
-allreplaced:"\u0110\u00E3 thay th\u1EBF t\u1EA5t c\u1EA3 chu\u1ED7i t\u1EEB c\u1EA7n t\u00ECm.",
-findwhat:"Chu\u1ED7i t\u1EEB c\u1EA7n t\u00ECm",
-replacewith:"Thay th\u1EBF b\u1EB1ng chu\u1ED7i t\u1EEB",
-direction:"H\u01B0\u1EDBng t\u00ECm ki\u1EBFm",
-up:"L\u00EAn",
-down:"Xu\u1ED1ng",
-mcase:"Ph\u00E2n bi\u1EC7t ch\u1EEF hoa, ch\u1EEF th\u01B0\u1EDDng ",
-findnext:"Ti\u1EBFp t\u1EE5c t\u00ECm",
-replace:"Thay th\u1EBF",
-replaceall:"Thay th\u1EBF t\u1EA5t c\u1EA3"
-});
+tinyMCE.addI18n('vi.searchreplace_dlg',{findwhat:"T\u00ecm ki\u1ebfm g\u00ec",replacewith:"Thay th\u1ebf v\u1edbi",direction:"H\u01b0\u1edbng",up:"L\u00ean",down:"Xu\u1ed1ng",mcase:"Theo c\u1ea3 ch\u1eef hoa",findnext:"T\u00ecm k\u1ebf ti\u1ebfp",allreplaced:"T\u1ea5t c\u1ea3 c\u00e1c l\u1ea7n xu\u1ea5t hi\u1ec7n c\u1ee7a c\u00e1c chu\u1ed7i t\u00ecm ki\u1ebfm \u0111\u01b0\u1ee3c thay th\u1ebf.","searchnext_desc":"T\u00ecm l\u1ea1i",notfound:"Vi\u1ec7c t\u00ecm ki\u1ebfm \u0111\u00e3 ho\u00e0n th\u00e0nh. Chu\u1ed7i t\u00ecm ki\u1ebfm kh\u00f4ng \u0111\u01b0\u1ee3c t\u00ecm th\u1ea5y.","search_title":"T\u00ecm ki\u1ebfm","replace_title":"T\u00ecm/Thay th\u1ebf",replaceall:"Thay th\u1ebf t\u1ea5t",replace:"Thay th\u1ebf"});

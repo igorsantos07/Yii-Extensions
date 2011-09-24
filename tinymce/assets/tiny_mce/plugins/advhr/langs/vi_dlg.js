@@ -1,5 +1,1 @@
-tinyMCE.addI18n('vi.advhr_dlg',{
-width:"Chi\u1EC1u r\u1ED9ng",
-size:"Chi\u1EC1u cao",
-noshade:"Kh\u00F4ng \u0111\u1ED5 b\u00F3ng"
-});
+tinyMCE.addI18n('vi.advhr_dlg',{size:"Chi\u1ec1u r\u1ed9ng",noshade:"Kh\u00f4ng c\u00f3 b\u00f3ng",width:"Chi\u1ec1u d\u00e0i"});
