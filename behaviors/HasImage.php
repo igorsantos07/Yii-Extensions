@@ -2,6 +2,7 @@
 /**
  * A ActiveRecordBehavior that resizes and deletes automatically images from a AR record.
  * Requires ImageCropper: http://www.yiiframework.com/extension/imagecropper/
+ * Requires also the param "imgPath", that is relative to the base folder of your project (protected/../)
  *
  * @author igoru
  */
@@ -37,7 +38,7 @@ class HasImage extends CActiveRecordBehavior {
 	 * Generated JPEG quality.
 	 * @var integer
 	 */
-	public $fileQuality	= 90;
+	public $fileQuality		= 90;
 
 	/**
 	 * If a thumbnail should be generated
@@ -54,14 +55,19 @@ class HasImage extends CActiveRecordBehavior {
 	 * @var integer
 	 */
 	public $thumbQuality	= 90;
-	
+	/**
+	 * Name of the folder where images are going to be saved. Defaults to the table name.
+	 * @var string
+	 */
+	public $folderName		= null;
+
 	public function __construct() {
       Yii::import('ext.ImageCropper');
    }
-	
+
 	public function beforeValidate($event) {
       parent::beforeValidate($event);
-	  
+
        	foreach ($this->fields as $field) {
            	if (!is_a($this->owner->$field, 'CUploadedFile'))
 					$this->owner->$field = CUploadedFile::getInstance($this->owner->model(), $field);
@@ -72,7 +78,7 @@ class HasImage extends CActiveRecordBehavior {
 
 	public function beforeSave($event) {
       parent::beforeSave($event);
-	  
+
        	if (!$this->owner->isNewRecord) {
 			foreach ($this->fields as $field) {
 				if (!$this->owner->$field)
@@ -162,7 +168,7 @@ class HasImage extends CActiveRecordBehavior {
 	 */
 	private function getImagePath($filename, $thumb = false) {
        	if ($thumb) $filename = $this->generateThumbName($filename);
-		return Yii::app()->basePath.'/'.Yii::app()->params['imgPath'].'/'.$this->owner->model()->tableName().'/'.$filename;
+		return Yii::app()->getBasePath(true).'/../'.Yii::app()->params['imgPath'].'/'.$this->getFolderName().'/'.$filename;
 	}
 
 	/**
@@ -176,12 +182,17 @@ class HasImage extends CActiveRecordBehavior {
 	 */
 	public function getImageUrl($field, $root = false, $thumb = false) {
      	$filename = ($thumb)? $this->generateThumbName($this->owner->$field) : $this->owner->$field;
-     	return Yii::app()->baseUrl.'/'.($root? Yii::app()->params['imgRootUrl'] : Yii::app()->params['imgUrl']).'/'.$this->owner->model()->tableName().'/'.$filename;
+     	return Yii::app()->getBaseUrl(true).'/'.($root? Yii::app()->params['imgRootUrl'] : Yii::app()->params['imgUrl']).'/'.$this->getFolderName().'/'.$filename;
 	}
 
 	private function generateThumbName($originalName) {
      	if (!$this->hasThumb) return $originalName;
      	return strtr($originalName, array('.jpg' => '.thumb.jpg'));
+	}
+
+	private function getFolderName() {
+		if ($this->folderName) return $this->folderName;
+		else return $this->owner->model()->tableName();
 	}
 
 }
