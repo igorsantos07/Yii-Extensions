@@ -2,7 +2,7 @@
 /**
  * A ActiveRecordBehavior that resizes and deletes automatically images from a AR record.
  * Requires ImageCropper: http://www.yiiframework.com/extension/imagecropper/
- * Requires also the param "imgPath", that is relative to the base folder of your project (protected/../)
+ * Requires also the param "imgPath", that is relative to the base folder of your project (protected/../), and "imgUrl", relative to your's site root URL
  *
  * @author igoru
  */
@@ -174,13 +174,13 @@ class HasImage extends CActiveRecordBehavior {
 	/**
 	 * Returns the image URL, in this format:
 	 * http://www.yoursite.com/img_folder/table_name/file.jpg
-	 * Requires the app params "imgUrl" and "imgRootUrl, that should contain relative paths
+	 * Requires the app params "imgUrl", that should contain relative paths
 	 * from the admin folder and root folder to the image folder.
 	 * @param string $root=false
 	 * @param string $thumb=false
 	 * @return string
 	 */
-	public function getImageUrl($field, $root = false, $thumb = false) {
+	public function getImageUrl($field, $thumb = false) {
      	$filename = ($thumb)? $this->generateThumbName($this->owner->$field) : $this->owner->$field;
      	return Yii::app()->getBaseUrl(true).'/'.($root? Yii::app()->params['imgRootUrl'] : Yii::app()->params['imgUrl']).'/'.$this->getFolderName().'/'.$filename;
 	}
