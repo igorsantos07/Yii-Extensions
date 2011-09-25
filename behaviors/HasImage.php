@@ -176,13 +176,12 @@ class HasImage extends CActiveRecordBehavior {
 	 * http://www.yoursite.com/img_folder/table_name/file.jpg
 	 * Requires the app params "imgUrl", that should contain relative paths
 	 * from the admin folder and root folder to the image folder.
-	 * @param string $root=false
 	 * @param string $thumb=false
 	 * @return string
 	 */
 	public function getImageUrl($field, $thumb = false) {
      	$filename = ($thumb)? $this->generateThumbName($this->owner->$field) : $this->owner->$field;
-     	return Yii::app()->getBaseUrl(true).'/'.($root? Yii::app()->params['imgRootUrl'] : Yii::app()->params['imgUrl']).'/'.$this->getFolderName().'/'.$filename;
+     	return Yii::app()->getBaseUrl(true).'/'.Yii::app()->params['imgUrl'].'/'.$this->getFolderName().'/'.$filename;
 	}
 
 	private function generateThumbName($originalName) {
