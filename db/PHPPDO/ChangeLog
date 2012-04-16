@@ -1,0 +1,60 @@
+1.4 April 14, 2009
+
+PDOStatement::fetchOnject() doesn't throw a warning anymore
+when used with a PDO version packed with PHP 5.2.6 or earlier
+[Nikolay Ananiev <admin at devuni dot com>]
+
+
+1.3 April 10, 2009
+
+Implemented missing PDOStatement::fetchObject() and made it
+consistent with the PDO version shipped with PHP 5.2.7
+[Nikolay Ananiev <admin at devuni dot com>]
+
+On connect error message was not shown in Oracle driver.
+[Nikolay Ananiev <admin at devuni dot com>]
+
+
+1.2 November 8, 2008
+
+Fixed syntax error in postgres (maybe others too)
+where a string literal can not be separated by space
+from a quoted string. For example
+    regexp_split_to_table('some string', E'\\s+')
+would break, because the query parser would generate: E '\\s+'
+[Nikolay Ananiev <admin at devuni dot com>]
+
+Fixed a bug, which would result in a syntax error
+when casting values in postgres. For example:
+	SELECT '1'::integer;
+would break, because the parser was thinking that
+":integer" is an oracle placeholder.
+[Nikolay Ananiev <admin at devuni dot com>]
+
+Fixed a bug in the mysql driver (using the mysql extension)
+when a null value is supplied to the quote method, it would return
+an empty string. 
+[Nikolay Ananiev <admin at devuni dot com>]
+
+
+1.1 February 12, 2008
+
+Many internal changes for drivers that do not
+support native prepare
+[Nikolay Ananiev <admin at devuni dot com>]
+
+Fixed quote bug in Statement::bindValue
+[Nikolay Ananiev <admin at devuni dot com>]
+
+PHPPDO::quote now accepts NULL values for
+PDO::PARAM_INT data type
+[Nikolay Ananiev <admin at devuni dot com>]
+
+Implemented Oracle (oci8) driver
+[Nikolay Ananiev <admin at devuni dot com>]
+
+
+1.0RC1 February 2, 2008
+
+Initial release...
+[Nikolay Ananiev <admin at devuni dot com>]
