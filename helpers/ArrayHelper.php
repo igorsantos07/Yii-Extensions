@@ -1,12 +1,11 @@
 <?php
 /**
- * Classe de utilidade para arrays
  * @author Igor Santos
  */
 abstract class ArrayHelper {
 
 	/**
-	 * Variável usada pelo método {@link compare}. É a chave que será usada para fazer as comparações.
+	 * Variable used by {@link compare} method. It's the key that's going to be used for comparisons.
 	 * @var string
 	 * @static
 	 */ public static $compare_key = '';
@@ -15,10 +14,10 @@ abstract class ArrayHelper {
 	 const REMOVE_BLACKLIST = 'b';
 
 	/**
-	 * Remove todos os valores vazios (empty()) de array e, opcionalmente, reindexa as chaves.
-	 * @param array $dirty_array O array em questão
-	 * @param boolean $reindexar=true Se vai reindexar as chaves numéricas ou não
-	 * @return array O array final, limpo.
+	 * Erases all empty() values from the $dirty_array and, optionally, reindexes the keys, and returns the final array.
+	 * @param array $dirty_array
+	 * @param boolean $reindexar [optional] If it's needed to reindex the keys; defaults to true.
+	 * @return array
 	 */
 	public static function clear(array $dirty_array, $reindexar = true) {
 		$remove = array();
@@ -34,10 +33,9 @@ abstract class ArrayHelper {
 	}
 
 	/**
-	 * Remove todas as chaves de $crowded_array, exceto as que estiverem na $whitelist e o retorna.
-	 * Não altera o array recebido!
+	 * Erases all the keys from $crowded_array, except the ones that are in the $whitelist, and returns the final array.
 	 * @param array $crowded_array
-	 * @param mixed $whitelist uma string que contenha o nome de somente uma chave, ou um array de nomes de chaves
+	 * @param mixed $whitelist a string with one key, or an array with many
 	 * @return array
 	 * @see blacklist
 	 */
@@ -46,10 +44,9 @@ abstract class ArrayHelper {
 	}
 
 	/**
-	 * Remove todas as chaves de $crowded_array que estiverem na $blacklist e o retorna.
-	 * Não altera o array recebido!
+	 * Erases all the keys from $crowded_array that are in the $blacklist, and returns the final array.
 	 * @param array $messy_array
-	 * @param mixed $blacklist uma string que contenha o nome de somente uma chave, ou um array de nomes de chaves
+	 * @param mixed $blacklist a string with one key, or an array with many
 	 * @return array
 	 * @see whitelist
 	 */
@@ -86,20 +83,21 @@ abstract class ArrayHelper {
 	}
 
 	/**
-	 * Método criado para facilitar comparações com {@link usort} e {@link uasort}.
+	 * Method to make the use of {@link usort} e {@link uasort} a little easier with arrays of arrays.
 	 *
-	 * Essas funções recebem como segundo argumento o nome de uma função personalizada para efetuar
-	 * a ordenação. Esse método necessita de uma string na variável estática {@link $compare_key},
-	 * e vai efetuar a comparação baseado no valor dessa chave em cada elemento do array que receber.
-	 * Exemplo:
+	 * Those functions receive as the second argument a custom ordering function. You should place the
+	 * key whose values will be used as order-key in {@link $compare_key} and give this method to usort().
+	 *
+	 * Example:
 	 * <code>
-	 * $zoneado = array(
-	 * array('id' => 2, 'nome' => 'Zebra'),
-	 * array('id' => 3, 'nome' => 'Cachorro'),
-	 * array('id' => 4, 'nome' => 'Elefante')
+	 * //ordering an array of arrays by the 'name' key
+	 * $messy = array(
+	 * array('id' => 2, 'name' => 'Zebra'),
+	 * array('id' => 3, 'name' => 'Dog'),
+	 * array('id' => 4, 'name' => 'Elephant')
 	 * );
-	 * BDM_Util_Array::$compare_key = 'nome';
-	 * usort($zoneado, 'BDM_Util_Array::compare');
+	 * ArrayHelper::$compare_key = 'nome';
+	 * usort($messy, 'ArrayHelper::compare');
 	 * </code>
 	 *
 	 * @param array $a
@@ -107,11 +105,25 @@ abstract class ArrayHelper {
 	 * @return integer
 	 */
 	public static function compare(array $a, array $b) {
-		if (empty(self::$compare_key)) throw new Exception('Necessário colocar a chave que será usada na comparação dos arrays na propriedade BDM_Util_Array::$compare_key');
+		if (empty(self::$compare_key)) throw new Exception('Necessário colocar a chave que será usada na comparação dos arrays na propriedade ArrayHelper::$compare_key');
 
 		if ($a[self::$compare_key] == $b[self::$compare_key])
 			return 0;
 		else
 			return ($a[self::$compare_key] < $b[self::$compare_key])? -1 : 1;
+	}
+
+	/**
+	 * Unsets values from the array using the value, instead of the key.
+	 * If the given $value appears in the $array more than one time, all of them will be erased.
+	 * @param array $array the array that should be searched
+	 * @param mixed $value the value that's going to be erased
+	 * @param boolean $strict [optional] if the search should be type-strict. Defaults to false.
+	 * @return null
+	 */
+	public static function unsetByValue(array &$array, $value, $strict = false) {
+		$keys = array_keys($array, $value, $strict);
+		if (is_array($keys))
+			foreach($keys as $key) unset($array[$key]);
 	}
 }
