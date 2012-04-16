@@ -42,6 +42,8 @@ else{
 
 
 // Load libraries
+
+ini_set('include_path', ini_get('include_path').PATH_SEPARATOR.dirname(dirname(dirname(__FILE__))).'/protected/extensions/TurbineCSS/turbine/');
 include('lib/browser/browser.php');
 include('lib/cssmin/cssmin.php');
 include('lib/base.php');
@@ -108,9 +110,22 @@ if($_GET['files']){
 			$fileinfo = pathinfo($file);
 
 			// For security reasons do not allow processing of files from above the base dir
-			if(strpos(realpath($fileinfo['dirname']), realpath($cssp->config['css_base_dir'])) !== 0){
-				$cssp->report_error('Path of '.$file.' is not in the base directory. File not processed for security reasons.');
-				continue;
+			$file_path = realpath($fileinfo['dirname']);
+			if(strpos($file_path, realpath($cssp->config['css_base_dir'])) !== 0){
+				$allowed = false;
+				if (isset($cssp->config['allowed_dirs'])) {
+					foreach($cssp->config['allowed_dirs'] as $allowed_dir) {
+						if (strpos($file_path, realpath($allowed_dir)) === 0) {
+							$allowed = true;
+							break;
+						}
+					}
+				}
+
+				if (!$allowed) {
+					$cssp->report_error('Path of '.$file.' is not in the base directory. File not processed for security reasons.');
+					continue;
+				}
 			}
 
 			if($fileinfo['extension'] == 'css'){
@@ -126,7 +141,7 @@ if($_GET['files']){
 
 
 				$incache = false;    // Server-side cache: Has file already been parsed?
-				$cachedir = isset($cssp->config['cache_dir'])? $cssp->config['cache_dir'] : $cssp->config['main_base_dir'].'cache'; // Cache directory
+				$cachedir = isset($cssp->config['cache_dir'])? $cssp->config['cache_dir'] : $cssp->config['turbine_base_dir'].'cache'; // Cache directory
 
 
 				// Server-side cache: Check if cache-directory has been created
@@ -167,7 +182,7 @@ if($_GET['files']){
 
 					// Load plugins (if not already loaded)
 					if(!$plugins_loaded){
-						$plugindir = $cssp->config['main_base_dir'].'plugins';
+						$plugindir = $cssp->config['turbine_base_dir'].'plugins';
 						if($handle = opendir($plugindir)){
 							while(false !== ($pluginfile = readdir($handle))){
 								if($pluginfile != '.' && $pluginfile != '..' && is_file($plugindir.'/'.$pluginfile) && pathinfo($plugindir.'/'.$pluginfile,PATHINFO_EXTENSION) == 'php' && !function_exists(substr($pluginfile, 0, -4))){
@@ -256,10 +271,10 @@ if($_GET['files']){
 					$output = file_get_contents($cachedir.'/'.$cachefile);
 				}
 
-			}
+				// Add to final css
+				$css .= $output;
 
-			// Add to final css
-			$css .= $output;
+			}
 		}
 
 
@@ -326,6 +341,3 @@ if($_GET['files']){
 	echo "\r\n*/\r\n".$css;
 
 }
-
-
-?>

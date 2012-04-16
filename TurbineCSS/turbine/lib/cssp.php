@@ -3,7 +3,7 @@
 /**
  * This file is part of Turbine
  * http://github.com/SirPepe/Turbine
- * 
+ *
  * Copyright Peter Kröner
  * Licensed under GNU LGPL 3, see license.txt or http://www.gnu.org/licenses/
  */
