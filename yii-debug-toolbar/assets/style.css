@@ -19,6 +19,8 @@
     background:transparent;
     font-family:sans-serif;
     text-align:left;
+    list-style: none;
+    list-style-type: none;
 }
 
 #yii-debug-toolbar{
@@ -312,16 +314,34 @@ margin-top:0.8em;
 #yii-debug-toolbar .collapsible{
     border-bottom: 1px dashed #ccc;
     cursor: pointer;
+    background: transparent url('bullet_toggle_minus.png') no-repeat scroll 100% 50%;
+}
+
+#yii-debug-toolbar p.collapsible{
+    border-bottom: 1px dashed #ccc;
+    cursor: pointer;
+    background: none;
+    background: transparent url('arrow_expand.gif') no-repeat scroll 0% 50%;
+    padding: 0 0 0 20px;
+
+}
+
+#yii-debug-toolbar .collapsible.collapsed
+{
     background: transparent url('bullet_toggle_plus.png') no-repeat scroll 100% 50%;
 }
 
-#yii-debug-toolbar .collapsed
+#yii-debug-toolbar p.collapsible.collapsed
 {
-    background: transparent url('bullet_toggle_minus.png') no-repeat scroll 100% 50%;
+    background: transparent url('arrow_collapse.gif') no-repeat scroll 0% 50%;
 }
 
 #yii-debug-toolbar .text-right {
 	text-align:right;
+}
+
+#yii-debug-toolbar pre, #yii-debug-toolbar pre code{
+    padding: 0;
 }
 
 #yii-debug-toolbar-sql-callstack tbody td, 
@@ -332,7 +352,6 @@ margin-top:0.8em;
 #yii-debug-toolbar div.col{ width: 49%; }
 #yii-debug-toolbar div.left{ float: left; }
 #yii-debug-toolbar div.right{ float: right; }
-
 
 
 
@@ -414,4 +433,58 @@ margin-top:0.8em;
 .source .copycode_hover a
 {
 	color: red !important;
+}
+
+
+#yii-debug-toolbar #resource-usage{
+    border-top: 1px double #EEEEEE;
+    
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
+    width: 190px;
+   
+}
+
+#yii-debug-toolbar #resource-usage h1{
+    padding: 0;
+    margin: 0;
+    color: #EEEEEE;
+    font-weight: bold;
+    background: transparent url(chronometer.png) no-repeat center right;
+    margin: 5px 0;
+}
+
+#yii-debug-toolbar #resource-usage .panel{
+    padding: 0 10px 10px;
+}
+
+#yii-debug-toolbar #resource-usage .panel ul{
+    display: block;
+    margin: 5px 0;
+    padding-top: 10px;
+}
+
+#yii-debug-toolbar #resource-usage .panel li{
+    display: block;
+    line-height: 18px;
+    height: 16px;
+    clear: both;
+}
+
+#yii-debug-toolbar #resource-usage .panel ul,
+#yii-debug-toolbar #resource-usage .panel li,
+#yii-debug-toolbar #resource-usage .panel li label,
+#yii-debug-toolbar #resource-usage .panel li span{
+    font-size: 9px;
+    color: #fff;
+}
+
+#yii-debug-toolbar #resource-usage .panel li label{
+    float: left;
+}
+
+#yii-debug-toolbar #resource-usage .panel li span{
+    float: right;
+    color: #CE4E4E;
 }

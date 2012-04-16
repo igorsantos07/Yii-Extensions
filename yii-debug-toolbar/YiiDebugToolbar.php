@@ -6,6 +6,7 @@
  */
 
 Yii::import('yii-debug-toolbar.panels.*');
+Yii::import('yii-debug-toolbar.widgets.*');
 
 /**
  * YiiDebugToolbar represents an ...
@@ -132,9 +133,13 @@ class YiiDebugToolbar extends CWidget
      */
     public function run()
     {
-        $this->render('yii_debug_toolbar', array(
+        $content = '';
+
+        $content .= $this->render('yii_debug_toolbar', array(
             'panels' => $this->getPanels()
-        ));
+        ), true);
+        
+        echo $content;
     }
 
     /**
